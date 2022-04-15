@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id              Int               @id @default(autoincrement())
+  name            String
+  street          String
+  number          Int
+  district        String
+  city            String
+  state           String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @default(now())
+  product         Product[]
+  photoRestaurant PhotoRestaurant[]
+  schedule        Schedule[]
+}
+
+model Product {
+  id            Int            @id @default(autoincrement())
+  id_restaurant Int
+  name          String
+  price         String
+  category      String
+  is_sale       Boolean        @default(false)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @default(now())
+  restaurant    Restaurant     @relation(fields: [id_restaurant], references: [id])
+  photoProduct  PhotoProduct[]
+  sale          Sale[]
+}
+
+model Sale {
+  id          Int        @id @default(autoincrement())
+  id_product  Int
+  description String
+  price       String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  product     Product    @relation(fields: [id_product], references: [id])
+  schedule    Schedule[]
+}
+
+model PhotoRestaurant {
+  id            Int        @id @default(autoincrement())
+  id_restaurant Int        @unique
+  originalname  String
+  filename      String
+  url           String
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @default(now())
+  restaurant    Restaurant @relation(fields: [id_restaurant], references: [id])
+}
+
+model PhotoProduct {
+  id           Int      @id @default(autoincrement())
+  id_product   Int      @unique
+  originalname String
+  filename     String
+  url          String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+  product      Product  @relation(fields: [id_product], references: [id])
+}
+
+model Schedule {
+  id            Int         @id @default(autoincrement())
+  id_restaurant Int?
+  id_sale       Int?
+  day_week      String
+  initial_time  String
+  end_time      String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now())
+  restaurant    Restaurant? @relation(fields: [id_restaurant], references: [id])
+  sale          Sale?       @relation(fields: [id_sale], references: [id])
+}

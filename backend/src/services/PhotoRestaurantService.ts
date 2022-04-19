@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import * as Yup from 'yup';
 import { CustomError } from 'express-handler-errors';
 import appConfig from '../config/appConfig';
 
@@ -18,7 +17,6 @@ class PhotoRestaurantService {
     const photo = await prisma.$queryRawUnsafe(
         `SELECT * FROM "PhotoRestaurant" WHERE (id = ${id})`
     )
-    
       return photo; 
 }
 
@@ -36,8 +34,9 @@ class PhotoRestaurantService {
       const originalName = params.originalname;
       const url = `${appConfig.url}/images/restaurant/${params.filename}`;
       const idRestaurant = id;
+      console.log(fileName, originalName, url, idRestaurant);
   
-      const photo = await prisma.$queryRaw`
+      await prisma.$queryRaw`
         INSERT INTO "PhotoRestaurant" (
                 filename, 
                 originalname,
@@ -59,59 +58,19 @@ class PhotoRestaurantService {
     
   }
 
-  async update(id: number, params: any) {
-    const schema = Yup.object().shape({
-      idRestaurant: Yup.number().required(),
-      fileName: Yup.string().required(),
-      originalName: Yup.string().required(),
-      url: Yup.string().required()
-    });
-
-    if (!(await schema.isValid(params))) {
-        throw new CustomError({
-          code: 'VALIDATION_FAILS',
-          message: 'Validation fails',
-          status: 400,
-        });
-    }
-
-    if (!params.filename) {
-      throw new CustomError({
-        code: 'FILE_NOT_FOUND',
-        message: 'File not found',
-        status: 400,
-      });
-    }
-
-    try {
-      const fileName = params.filename;
-      const originalName = params.originalname;
-      const url = `${appConfig.url}/images/restaurant/${params.filename}`;
-      const idRestaurant = params.id;
-  
-      const photo = await prisma.$executeRaw`
-        UPDATE "PhotoRestaurant" SET
-        id_restaurant = ${idRestaurant}, 
-        filename = ${fileName},
-        originalname = ${originalName},
-        url = ${url} WHERE id = ${id};
-        `
-        return photo;
-    } catch (e: any) {
-      throw new CustomError({
-          code: 'ERROR_SAVE_IMAGE',
-          message: e,
-          status: 400,
-        });
-    }
-  }
-
-  async getByUser(id: number) {
+  async getByRestaurant(id: number) {
     const photo = await prisma.$queryRawUnsafe(
       `SELECT * FROM "PhotoRestaurant" WHERE (id_restaurant = ${id})`
   )
   
     return photo; 
+  }
+
+  async delete(id: number) {
+    const restaurant = await prisma.$queryRawUnsafe(
+        `DELETE FROM "PhotoRestaurant" WHERE (id = ${id})`
+    )
+      return restaurant; 
   }
 }
 

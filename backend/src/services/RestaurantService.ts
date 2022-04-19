@@ -37,7 +37,7 @@ class RestaurantService {
             const schema = Yup.object().shape({
                 name: Yup.string().required(),
                 street: Yup.string().required(),
-                number: Yup.number(),
+                number: Yup.number().required(),
                 district: Yup.string().required(),
                 city: Yup.string().required(),
                 state: Yup.string().required(),
@@ -51,7 +51,7 @@ class RestaurantService {
                 });
             }
     
-            const restaurant = await prisma.$queryRaw`
+            await prisma.$queryRaw`
                 INSERT INTO "Restaurant" (
                         name, 
                         street,
@@ -82,7 +82,7 @@ class RestaurantService {
             const schema = Yup.object().shape({
                 name: Yup.string().required(),
                 street: Yup.string().required(),
-                number: Yup.number(),
+                number: Yup.number().required(),
                 district: Yup.string().required(),
                 city: Yup.string().required(),
                 state: Yup.string().required(),
@@ -96,25 +96,7 @@ class RestaurantService {
                 });
             }
 
-
-            // data.name ? sql('name', data.name) : null;
-            // data.street ? sql('street', data.street) : null;
-            // data.number ? sql('number', data.number) : null;
-            // data.district ? sql('district', data.district) : null;
-            // data.city ? sql('city', data.city) : null;
-            // data.state ? sql('state', data.state) : null;
-
-            
-            // function sql(column: string, value: string | number) {
-            //     console.log(column, value);
-            //     prisma.$executeRaw`
-            //         UPDATE "Restaurant" SET 
-            //         ${column} = ${value}
-            //         WHERE id = ${id};
-            //     `
-            // }
-
-            const restaurant = await prisma.$executeRaw`
+            await prisma.$executeRaw`
                 UPDATE "Restaurant" SET 
                 name = ${data.name},
                 street = ${data.street},

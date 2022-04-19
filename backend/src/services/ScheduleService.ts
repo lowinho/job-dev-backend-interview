@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import * as Yup from 'yup';
 import { CustomError } from 'express-handler-errors';
 import { ISchedule } from '../models';
+import { validationTime } from '../functions/validationTime';
 
 const prisma = new PrismaClient()
 
@@ -35,7 +36,9 @@ class ScheduleService {
                   status: 400,
                 });
             }
-    
+
+            if (!validationTime(initialTime, endTime)) return;
+
             await prisma.$queryRaw`
                 INSERT INTO "Schedule" (
                         id_restaurant,
@@ -54,7 +57,7 @@ class ScheduleService {
         } catch(e) {
             throw new CustomError({
                 code: 'VALIDATION_FAILS',
-                message: `Error ${e}`,
+                message: `${e}`,
                 status: 400,
               });
         }   
@@ -77,6 +80,8 @@ class ScheduleService {
                   status: 400,
                 });
             }
+
+            if (!validationTime(data.initialTime, data.endTime)) return;
     
             await prisma.$executeRaw`
                 UPDATE "Schedule" SET 
@@ -90,18 +95,11 @@ class ScheduleService {
         } catch(e) {
             throw new CustomError({
                 code: 'VALIDATION_FAILS',
-                message: `Error ${e}`,
+                message: `${e}`,
                 status: 400,
               });
         }
     }  
-
-    async delete(id: number) {
-        const schedule = await prisma.$queryRawUnsafe(
-            `DELETE FROM "Schedule" WHERE (id = ${id})`
-        )
-          return schedule; 
-    }
 
     async getByRestaurant(id: number) {
         const photo = await prisma.$queryRawUnsafe(
@@ -118,6 +116,13 @@ class ScheduleService {
       
         return photo; 
       }
+
+    async delete(id: number) {
+        const schedule = await prisma.$queryRawUnsafe(
+            `DELETE FROM "Schedule" WHERE (id = ${id})`
+        )
+          return schedule; 
+    }
 }
 
 export { ScheduleService };

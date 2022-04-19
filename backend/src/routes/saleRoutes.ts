@@ -8,5 +8,6 @@ saleRoutes.get("/", saleController.index);
 saleRoutes.get("/:id", saleController.show);
 saleRoutes.post("/", saleController.store);
 saleRoutes.put("/:id", saleController.update);
+saleRoutes.delete("/:id", saleController.delete);
 
 export { saleRoutes };

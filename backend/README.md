@@ -8,12 +8,17 @@
 Após clonar o projeto 
 - cd backend/
 - usar como sugestão o comando "npm install" e rodar a aplicação com "npm start";
-- rodar configuração do docker com postgres, consultar documentação: 
+- rodar configuração do docker com postgres para servidor:
+    `docker run --name goomer -p 5432:5432 -e POSTGRES_PASSWORD=goomer postgres`
+- também criar servidor de testes:
+    `docker run --name goomer-test -p 5432:5432 -e POSTGRES_PASSWORD=goomertest postgres`
+- consultar documentação: 
 -- [Docker + postgres](https://hub.docker.com/_/postgres);
 - criação de migrations e tabelas no banco com o comando "npx prisma migrate dev" vide documentação:
 -- [Prisma Migrate](https://www.prisma.io/docs/guides/migrate-to-prisma/migrate-from-sequelize);
 - Rodar projeto e para testar as rotas usar como sugestão o Insomnia
 -- [Insomnia](https://insomnia.rest/download);
+-- Como sugestão para visualização do banco de dados, o prisma oferece uma ferramenta com o comando "npx prisma studio";
 
 
 ### Estrutura
@@ -22,17 +27,21 @@ Foi usada a estrutura dentro da pasta **src**:
 -url de co*nfiguração da api.
 -configurações do multer para criação de path e imagens;
 *controller e services*
-- foi criado controllers e services para organização das regras de negócio;
+- foi criada controllers e services para organização das regras de negócio;
+*functions*
+- foi criada uma pasta de functions ser compartilhada por toda a aplicação;
 *models*
-- foi criado um arquivo de models para tipar a entrada de dados;
+- foi criada uma pasta de models para tipar a entrada de dados;
 *routes*
 - foi feita a separação de cada arquivo de rotas com seus respectivos serviços para organização;
 *uploads*
 - local onde as imagens são armazenadas;
+*unit*
+- foi criada uma pasta com *assets* (imagens a ser usadas nos testes) e *tests* com todos os arquivos de testes;
 
 **raíz do projeto**
 - Foi criado um arquivo (routes.ts) com todas as bases das rotas para distribuição na pasta de rotas;
-- Criado o app.ts para gerenciar todas as inportações principais e rodar o projeto;
+- Criado o server.ts para gerenciar todas as inportações principais e rodar o projeto;
 
 ### Packages
 **prisma** -- [Prisma](https://www.prisma.io/docs/getting-started/quickstart);
@@ -68,8 +77,15 @@ No service **ScheduleService** foram criados mais dois métodos para trazer os d
 *getBySale GET*   
 - caso a pesquisa for pelo id_sale;
 
-### Tables
-Explicação sobre as tables criadas e a organização das mesmas para solução do desafio:
+### Validações
+- Para as validações foi usado o *YUP*, porém no service de `Schedule` foi feita uma validação, usei uma function compartilhada para os métodos de store e update.
+- Segui as seguintes regras:
+- o horário precisa ser no formato `HH:mm`;
+- o horário inicial não pode ser menor do que o final;
+- o intervalo entre os horários precisa ser no mínimo de 15 minutos;
+
+### Tabelas
+Explicação sobre as tabelas criadas e a organização das mesmas para solução do desafio:
 `Restaurant` -> tabela criada com informações necessárias do restaurante e tem relação com `PhotoRestaurant` e `Schedule`;
 `PhotoRestaurant` -> tabela criada para armazenar informações da foto do Restaurante, relacionada com `Restaurant`;
 `Product` -> tabela criada com informações necessárias do produto e relacionada com `PhotoProduct` e `Restaurant`, também pode ter relação com `Sale`;
@@ -77,15 +93,38 @@ Explicação sobre as tables criadas e a organização das mesmas para solução
 `Sale` -> tabela criada com informações necessárias da promoção e relacionada com `Product`, e também relação com `Schedule`;
 `Schedule` -> essa tabela foi criada com o intuito de atender tanto aos horários do Restaurante `Restaurant` quanto aos horários de um eventual promoção em `Sale`;
 
+### Testes
+- Foi criado um arquivo **jest.config.cjs* na raíz do projeto.
+- Na pasta *unit* contém:
+*assets* com os arquivos a serem usados nos testes de `PhotoRestaurant` e `PhotoProduct`;
+*tests* com todos os testes abaixo:
+`Restaurant` -> criei testes de todos os métodos e um Post a mais para teste do delete;
+`PhotoRestaurant` -> criei testes de todos os métodos;
+`Product` -> criei testes de todos os métodos e um Post a mais para teste do delete;
+`PhotoProduct` -> criei testes de todos os métodos;
+`Sale` -> criei testes de todos os métodos e um Post a mais para teste do delete;
+`Schedule` -> criei testes de todos os métodos e um Post a mais para teste do delete;
+
+**#** NOTAS IMPORTANTES SOBRE OS TESTES **#**
+* No arquivo **package.json* foram criados os seguintes scripts:
+- pretest -> cria as migrations e as tabelas no banco de dados;
+- test -> executa todos os testes na ordem para evitar erros, visto que temos tabelas com relação;
+- posttest -> executa um reset nas migrations para limpeza do banco. O mesmo questiona sobre apagar ou não os testes, 
+caso queira visualizar os testes no banco de dados selecione a opção N, se quiser excluir selecione a opção Y;
+
 ### Melhorias e desafios da aplicação
 **Desafio**
 - O meu maior desafio foi na execução das consultas do banco com SQL, tenho um certo conhecimento de sql, porém havia feito apenas um projeto que tive a necessidade de usar
 essas consultas, portanto, meu desafio foi conseguir encontrar uma solução para trazer os dados de maneira mais correta e fácil de execução de um frontend;
+- Como é a primeira vez que uso teste na prática (excluindo projetos de estudo) tive um pouco de dificuldades principalmente na organização de sequências dos arquivos a serem
+testados, porém tentei achar a melhor solução.
 
 **Melhorias**
 - A melhoria se baseia no que expliquei acima na guia **Desafio**, acredito que através de um estudo mais aprofundado posso executar de uma forma que melhore a performance
 de consulta do banco SQL.
 - Acho que uma boa solução foi usar a table `Schedule` que organiza os horários tanto para `Restaurant` quanto para `Sale`.
+- Para os testes existem outras soluções de sequência de testes, ou poderia ser criada uma variável de ambiente no *.env* conforme feito, mas a visualização foi prejudicada
+e preferi deixar no *package.json* com todos os arquivos no script: test.
 
 ### Considerações finais
 - Encontrei o desafio ao buscar algo para estudar e melhorar como desenvolvedor, tentei utilizar os conceitos que conheço atualmente em node, deixando o código o mais limpo possível. 
@@ -94,3 +133,4 @@ frontend-> *React* e *Angular*;
 backend-> *Node* e *PHP* 
 -Já trabalhei em alguns projetos de estudo mobile com *React Native* e *Ionic* e também na criação de web-components para design com *Stencil*;
 - Agradeço a oportunidade. Obrigado.
+

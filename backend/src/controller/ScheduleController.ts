@@ -68,19 +68,6 @@ class ScheduleController {
         }
     }
 
-    async delete(req: Request, res: Response) {
-        const { id } = req.params;
-        const scheduleService = new ScheduleService();
-        try {
-            const restaurant = await scheduleService.delete(parseInt(id));
-            return res.json(restaurant)
-        } catch (err: any) {
-            return res.status(400).json({
-                message: err.message,
-            })
-        }
-    }
-
     async getByRestaurant(req: Request, res: Response) {
         const { id } = req.params;
         const scheduleService = new ScheduleService();
@@ -100,6 +87,19 @@ class ScheduleController {
         try {
             const music = await scheduleService.getBySale(parseInt(id));
             return res.json(music)
+        } catch (err: any) {
+            return res.status(400).json({
+                message: err.message,
+            })
+        }
+    }
+
+    async delete(req: Request, res: Response) {
+        const { id } = req.params;
+        const scheduleService = new ScheduleService();
+        try {
+            const restaurant = await scheduleService.delete(parseInt(id));
+            return res.json(restaurant)
         } catch (err: any) {
             return res.status(400).json({
                 message: err.message,

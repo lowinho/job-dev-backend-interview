@@ -8,5 +8,6 @@ scheduleRoutes.get("/", scheduleController.index);
 scheduleRoutes.get("/:id", scheduleController.show);
 scheduleRoutes.post("/", scheduleController.store);
 scheduleRoutes.put("/:id", scheduleController.update);
+scheduleRoutes.delete("/:id", scheduleController.delete);
 
 export { scheduleRoutes };

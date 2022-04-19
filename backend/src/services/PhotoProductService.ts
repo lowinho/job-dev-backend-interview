@@ -27,9 +27,9 @@ class PhotoProductService {
       const fileName = params.filename;
       const originalName = params.originalname;
       const url = `${appConfig.url}/images/product/${params.filename}`;
-      const productId = id;
+      const idProduct = id;
   
-      const photo = await prisma.$queryRaw`
+      await prisma.$queryRaw`
         INSERT INTO "PhotoProduct" (
                 filename, 
                 originalname,
@@ -38,7 +38,7 @@ class PhotoProductService {
         VALUES (${fileName}, 
                 ${originalName}, 
                 ${url}, 
-                ${productId});
+                ${idProduct});
         `
         return "Successful Register";   
     } catch (e: any) {
@@ -98,11 +98,18 @@ class PhotoProductService {
     }
   }
 
-  async getByUser(id: number) {
+  async getByProduct(id: number) {
     const photo = await prisma.$queryRawUnsafe(
       `SELECT * FROM "PhotoProduct" WHERE (id_product = ${id})`
   )
     return photo; 
+  }
+
+  async delete(id: number) {
+    const restaurant = await prisma.$queryRawUnsafe(
+        `DELETE FROM "PhotoProduct" WHERE (id = ${id})`
+    )
+      return restaurant; 
   }
 }
 

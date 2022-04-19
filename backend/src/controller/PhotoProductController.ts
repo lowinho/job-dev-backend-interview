@@ -30,18 +30,31 @@ class PhotoProductController {
         }
     }
 
-    async getByUser(req: Request, res: Response) {
+    async getByProduct(req: Request, res: Response) {
       const { id } = req.params;
-      const musicService = new PhotoProductService();
+      const photoService = new PhotoProductService();
       try {
-          const music = await musicService.getByUser(parseInt(id));
-          return res.json(music)
+          const photo = await photoService.getByProduct(parseInt(id));
+          return res.json(photo)
       } catch (err: any) {
           return res.status(400).json({
               message: err.message,
           })
       }
   }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const photoService = new PhotoProductService();
+    try {
+        const restaurant = await photoService.delete(parseInt(id));
+        return res.json(restaurant)
+    } catch (err: any) {
+        return res.status(400).json({
+            message: err.message,
+        })
+    }
+}
 }
 
 export { PhotoProductController };

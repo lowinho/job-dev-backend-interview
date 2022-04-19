@@ -49,14 +49,26 @@ Usei o prisma para conectar ao banco de dados e criar as tabelas, para as regras
 - `$queryRawUnsafe`;
 - `$executeRaw`;
 - `$queryRaw`;
-Foi usado varáveis de ambiente com um arquivo ".env" criado na raiz do projeto;
+
+**.env** -- [Dotenv](https://www.npmjs.com/package/dotenv);
+Foi usado varáveis de ambiente com um arquivo *.env* criado na raiz do projeto;
+O arquivo *.env* foi configurado da seguinte forma:
+`APP_URL=http://localhost:3333` -> porta escolhida
+`DATABASE_URL=postgresql://postgres:goomer@localhost:5432/postgres` -> caso siga o run docker conforme explicado acima.
+`DATABASE_URL="postgresql://postgres:goomertest@localhost:5432/postgres` -> ao fazer os testes alterar DATABASE_URL para essa.
+`TEST_ORDER="jest src/unit/tests/Restaurant.spec.ts && jest src/unit/tests/PhotoRestaurant.spec.ts && ..."` -> colocar todos os arquivos de teste, caso opte por usar essa variável de ambiente, alterar o script de test no *package.json* para:
+scripts: {
+    "test": "dotenv cross-var %TEST_ORDER%"
+};
+
 **YUP** --[Yup](https://www.npmjs.com/package/yup);
 Usei o yup para validações;
+
 **Multer** --[Multer](https://www.npmjs.com/package/multer);
 Usei o multer para organizar o upload de imagens e gerenciar arquivos file;
 
 Também foram usados:
-**express-handler-errors, express, cors, helmet, typescript**;
+**express-handler-errors, express, cors, helmet, typescript, express-rate-limit**;
 
 ### Métodos e regras de negócio
 Como exemplo para explicação do projeto vou usar o **RestaurantService**;
@@ -66,11 +78,12 @@ Como exemplo para explicação do projeto vou usar o **RestaurantService**;
 - mediante a "id" enviado exibe o restaurante;
 - fiz três consultas no banco para montar uma estrutura mais organizada e separada na saída ao invés de usar um JOIN e trazer todos os dados juntos;
 *store POST*
-- realiza a validação com o **YUP** salvo os dados conforme informações passadas;
+- realiza a validação com o **YUP** e salva os dados conforme informações passadas;
 *update PUT*
 - atualiza os dados mediante envio do id;
 *delete DELETE* 
 - deleta um restaurante mediante envio de id;
+
 No service **ScheduleService** foram criados mais dois métodos para trazer os dados mediante:
 *getByRestaurant GET*
 - caso a pesquisa for pelo id_restaurant;
@@ -78,7 +91,7 @@ No service **ScheduleService** foram criados mais dois métodos para trazer os d
 - caso a pesquisa for pelo id_sale;
 
 ### Validações
-- Para as validações foi usado o *YUP*, porém no service de `Schedule` foi feita uma validação, usei uma function compartilhada para os métodos de store e update.
+- Para as validações foi usado o *YUP*, porém no service de `Schedule` foi feita uma validação através de uma function compartilhada para os métodos de store e update.
 - Segui as seguintes regras:
 - o horário precisa ser no formato `HH:mm`;
 - o horário inicial não pode ser menor do que o final;
@@ -108,7 +121,7 @@ Explicação sobre as tabelas criadas e a organização das mesmas para soluçã
 **#** NOTAS IMPORTANTES SOBRE OS TESTES **#**
 * No arquivo *package.json* foram criados os seguintes scripts:
 - pretest -> cria as migrations e as tabelas no banco de dados;
-- test -> executa todos os testes na ordem para evitar erros, visto que temos tabelas com relação;
+- test -> executa todos os testes na ordem para evitar erros, visto que temos tabelas com relação entre elas;
 - posttest -> executa um reset nas migrations para limpeza do banco. O mesmo questiona sobre apagar ou não os testes, 
 caso queira visualizar os testes no banco de dados selecione a opção N, se quiser excluir selecione a opção Y;
 
@@ -116,8 +129,8 @@ caso queira visualizar os testes no banco de dados selecione a opção N, se qui
 **Desafio**
 - Acho que uma boa solução foi usar a table `Schedule` que organiza os horários tanto para `Restaurant` quanto para `Sale`.
 - O meu maior desafio foi na execução das consultas do banco com SQL, tenho um certo conhecimento de sql, porém havia feito apenas um projeto que tive a necessidade de usar
-essas consultas, portanto, meu desafio foi conseguir encontrar uma solução para trazer os dados de maneira mais correta e fácil de execução de um frontend;
-- Como é a primeira vez que uso teste na prática (excluindo projetos de estudo) tive um pouco de dificuldades principalmente na organização de sequências dos arquivos a serem
+essas consultas, portanto, meu desafio foi conseguir encontrar uma solução para trazer os dados de maneira mais correta e fácil de execução para um frontend;
+- Como é a primeira vez que uso testes na prática (excluindo projetos de estudo) tive um pouco de dificuldades principalmente na organização de sequências dos arquivos a serem
 testados, porém tentei achar a melhor solução.
 
 **Melhorias**
@@ -125,6 +138,8 @@ testados, porém tentei achar a melhor solução.
 de consulta do banco SQL.
 - Para os testes existem outras soluções de sequência de testes, ou poderia ser criada uma variável de ambiente no *.env* conforme feito, mas a visualização foi prejudicada
 e preferi deixar no *package.json* com todos os arquivos no script: test.
+- Poderiam ter algumas validações mais aprofundadas, também um tratamento de erros mais específico.
+- Imaginando que essa api atenda mais de um restaurante poderia ser criado um middleware que usado na rota impediria um usuário de acessar determinada rota inacessível.
 
 ### Considerações finais
 - Encontrei o desafio ao buscar algo para estudar e melhorar como desenvolvedor, tentei utilizar os conceitos que conheço atualmente em node, deixando o código o mais limpo possível. 
@@ -133,4 +148,8 @@ frontend-> *React* e *Angular*;
 backend-> *Node* e *PHP* 
 -Já trabalhei em alguns projetos de estudo mobile com *React Native* e *Ionic* e também na criação de web-components para design com *Stencil*;
 - Agradeço a oportunidade. Obrigado.
+
+
+
+
 

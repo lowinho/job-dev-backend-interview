@@ -23,7 +23,7 @@ class SaleService {
             const schema = Yup.object().shape({
                 idProduct: Yup.number().required(),
                 description: Yup.string().required(),
-                price: Yup.number().required()
+                price: Yup.string().required()
             });
 
             if (!(await schema.isValid({ idProduct, description, price }))) {
@@ -58,7 +58,7 @@ class SaleService {
         const schema = Yup.object().shape({
             idProduct: Yup.number().required(),
             description: Yup.string().required(),
-            price: Yup.number().required()
+            price: Yup.string().required()
         });
 
         if (!(await schema.isValid( data ))) {

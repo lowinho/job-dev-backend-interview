@@ -7,7 +7,7 @@ describe("Post", () => {
         const image = path.resolve(__dirname, `../assets/produto.jpg`);
         const response = await request(app)
         .post('/photo-product/1')
-        .set('content-type', 'multipart/form-data')
+        .set('content-type', 'application/octet-stream')
         .attach('file', image)
         expect(response.status).toBe(200);
     })

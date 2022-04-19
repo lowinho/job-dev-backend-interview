@@ -7,7 +7,7 @@ describe("Post", () => {
         const image = path.resolve(__dirname, `../assets/restaurante.jpg`);
         const response = await request(app)
         .post('/photo-restaurant/1')
-        .set('content-type', 'multipart/form-data')
+        .set('content-type', 'application/octet-stream')
         .attach('file', image)
         expect(response.status).toBe(200);
     })
@@ -29,7 +29,7 @@ describe("getByRestaurant", () => {
 
 describe("Delete", () => {
     it("should delete a photo restaurant to db", async() => {
-        const response = await request(app).delete('/photo-restaurant/2');
+        const response = await request(app).delete('/photo-restaurant/1');
         expect(response.status).toBe(200);
     })
 })

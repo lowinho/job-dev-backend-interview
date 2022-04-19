@@ -9,9 +9,9 @@ Após clonar o projeto
 - cd backend/
 - usar como sugestão o comando "npm install" e rodar a aplicação com "npm start";
 - rodar configuração do docker com postgres para servidor:
-    `docker run --name goomer -p 5432:5432 -e POSTGRES_PASSWORD=goomer postgres`
+    `docker run --name goomer -p 5432:5432 -e POSTGRES_PASSWORD=goomer -d postgres`
 - também criar servidor de testes:
-    `docker run --name goomer-test -p 5432:5432 -e POSTGRES_PASSWORD=goomertest postgres`
+    `docker run --name goomer-test -p 5432:5432 -e POSTGRES_PASSWORD=goomertest -d postgres`
 - consultar documentação: 
 -- [Docker + postgres](https://hub.docker.com/_/postgres);
 - criação de migrations e tabelas no banco com o comando "npx prisma migrate dev" vide documentação:
@@ -41,13 +41,13 @@ Foi usada a estrutura dentro da pasta **src**:
 
 **raíz do projeto**
 - Foi criado um arquivo (routes.ts) com todas as bases das rotas para distribuição na pasta de rotas;
-- Criado o server.ts para gerenciar todas as inportações principais e rodar o projeto;
+- Criado o server.ts para gerenciar todas as importações principais e rodar o projeto;
 
 ### Packages
 **prisma** -- [Prisma](https://www.prisma.io/docs/getting-started/quickstart);
 Usei o prisma para conectar ao banco de dados e criar as tabelas, para as regras de negócio do sql foram usados os métodos:
 - `$queryRawUnsafe`;
-- `$$executeRaw`;
+- `$executeRaw`;
 - `$queryRaw`;
 Foi usado varáveis de ambiente com um arquivo ".env" criado na raiz do projeto;
 **YUP** --[Yup](https://www.npmjs.com/package/yup);
@@ -106,7 +106,7 @@ Explicação sobre as tabelas criadas e a organização das mesmas para soluçã
 `Schedule` -> criei testes de todos os métodos e um Post a mais para teste do delete;
 
 **#** NOTAS IMPORTANTES SOBRE OS TESTES **#**
-* No arquivo **package.json* foram criados os seguintes scripts:
+* No arquivo *package.json* foram criados os seguintes scripts:
 - pretest -> cria as migrations e as tabelas no banco de dados;
 - test -> executa todos os testes na ordem para evitar erros, visto que temos tabelas com relação;
 - posttest -> executa um reset nas migrations para limpeza do banco. O mesmo questiona sobre apagar ou não os testes, 
@@ -114,6 +114,7 @@ caso queira visualizar os testes no banco de dados selecione a opção N, se qui
 
 ### Melhorias e desafios da aplicação
 **Desafio**
+- Acho que uma boa solução foi usar a table `Schedule` que organiza os horários tanto para `Restaurant` quanto para `Sale`.
 - O meu maior desafio foi na execução das consultas do banco com SQL, tenho um certo conhecimento de sql, porém havia feito apenas um projeto que tive a necessidade de usar
 essas consultas, portanto, meu desafio foi conseguir encontrar uma solução para trazer os dados de maneira mais correta e fácil de execução de um frontend;
 - Como é a primeira vez que uso teste na prática (excluindo projetos de estudo) tive um pouco de dificuldades principalmente na organização de sequências dos arquivos a serem
@@ -122,7 +123,6 @@ testados, porém tentei achar a melhor solução.
 **Melhorias**
 - A melhoria se baseia no que expliquei acima na guia **Desafio**, acredito que através de um estudo mais aprofundado posso executar de uma forma que melhore a performance
 de consulta do banco SQL.
-- Acho que uma boa solução foi usar a table `Schedule` que organiza os horários tanto para `Restaurant` quanto para `Sale`.
 - Para os testes existem outras soluções de sequência de testes, ou poderia ser criada uma variável de ambiente no *.env* conforme feito, mas a visualização foi prejudicada
 e preferi deixar no *package.json* com todos os arquivos no script: test.
 
